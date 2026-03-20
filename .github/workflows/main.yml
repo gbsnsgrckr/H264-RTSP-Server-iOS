@@ -7,11 +7,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Install Dependencies
+        run: pod install
+
       - name: Build the iOS App
         run: |
           xcodebuild clean build \
-            -project "H264-RTSP-Server-iOS.xcodeproj" \
-            -scheme "H264-RTSP-Server-iOS" \
+            -workspace "Encoder Demo.xcworkspace" \
+            -scheme "Encoder Demo" \
             -sdk iphoneos \
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
