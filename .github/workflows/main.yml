@@ -1,0 +1,31 @@
+name: Build Unsigned IPA
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Build the iOS App
+        run: |
+          xcodebuild clean build \
+            -project "H264-RTSP-Server-iOS.xcodeproj" \
+            -scheme "H264-RTSP-Server-iOS" \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            SYMROOT=$(PWD)/build
+
+      - name: Package into IPA
+        run: |
+          mkdir Payload
+          find ./build/Release-iphoneos -name "*.app" -type d -exec cp -R {} Payload/ \;
+          zip -qr H264-RTSP-Server.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: RTSP-Server-IPA
+          path: H264-RTSP-Server.ipa
